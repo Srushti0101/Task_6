@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card glass-card p-4">
+      <h3 class="mb-4">
+        {% if task %}<i class="bi bi-pencil-square"></i> Edit Task
+        {% else %}<i class="bi bi-plus-circle"></i> Create Task{% endif %}
+      </h3>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for field in form %}
+          {% if field.name == 'completed' %}
+            <div class="form-check mb-3">
+              {{ field }}
+              <label class="form-check-label" for="{{ field.id_for_label }}">Mark as completed</label>
+            </div>
+          {% else %}
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}
+              </label>
+              {{ field }}
+              {% for error in field.errors %}
+                <div class="invalid-feedback d-block">
+                  <i class="bi bi-exclamation-circle"></i> {{ error }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn btn-gradient px-4">
+            {% if task %}Update Task{% else %}Save Task{% endif %}
+          </button>
+          <a href="{% url 'task_list' %}" class="btn btn-light">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
